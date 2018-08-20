@@ -8,9 +8,10 @@ overlap=0.2;
 map1=rgb2gray(imread('Fr1_5.png','png'));
 map2=rgb2gray(imread('Fr2_5.png','png'));
 % imshowpair(map1,map2);
+tic;
 %% 选取特殊点   
 % 1.选取harris角点最强点200个 
-% 2.均匀分布选取harris角点最强点200个    (current) %figure;
+% 2.均匀分布选取harris角点最强点200个    (current) 
 % imshow(map1);hold on;
 cornersM1=detectHarrisFeatures(map1);%plot(selectUniform(cornersM1,200,size(map1)));%cornersM1.selectStrongest(200)
 seleCorM1=selectUniform(cornersM1,300,size(map1));
@@ -45,9 +46,13 @@ axis equal
 [M2Desp,M2Seed,M2Norm]=exarctEIG2d(pointCMap2,gridStep,zSeleCorM2);
 %%  匹配
 Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
+toc
 figure;
-pcshow(pcMap3d2);hold on;
-pcshow(pctransform(pcMap3d1,affine3d(Motion')));
+obtain2d(pointCMap2,'.');hold on;
+transMap=Motion*[pointCMap1';ones(1,length(pointCMap1))];
+obtain2d(transMap,'.');
+% pcshow(pcMap3d2);hold on;
+% pcshow(pctransform(pcMap3d1,affine3d(Motion')));
 % imshow(imrotate(map1,74.0));
 % imshowpair(map1,map2);
 % imshow(imresize(map1,[200,200]));

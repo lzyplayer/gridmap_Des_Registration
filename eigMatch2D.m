@@ -76,13 +76,14 @@ threshold = gridStep*gridStep;
         match_srcSeed3d = match_srcSeed3d(:,CS);
         match_tarSeed3d = match_tarSeed3d(:,CS);
         [T, Eps] = estimateRigidTransform(match_tarSeed3d, match_srcSeed3d);
-        tarEst = T*[srcSeed3d;ones(1,M)];
-        tarEst = tarEst(1:3,:);
-        tform{n} = T;
+        T2d=[T(1:2,1:2),T(1:2,4); [0 0 1]];
+        tarEst = T2d*[srcSeed;ones(1,M)];
+        tarEst = tarEst(1:2,:);
+        tform{n} = T2d;
         
-        [index,dist] = flann_search(tarEst,tarSeed3d,1,params);
+        [index,dist] = flann_search(tarEst,tarSeed,1,params);
         [dist,ind] = sort(dist);        
-        Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed3d(:,ind(1:ovNum))).^2));
+        Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
         break;
