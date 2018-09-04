@@ -4,25 +4,25 @@ params.algorithm = 'kdtree';
 params.trees = 8;
 params.checks = 64;
 radii = (0.5:0.5:2)*gridStep;
-srcSeed3d=[srcSeed;zeros(1,size(srcSeed,2))];
-tarSeed3d=[tarSeed;zeros(1,size(tarSeed,2))];
+% srcSeed3d=[srcSeed;zeros(1,size(srcSeed,2))];
+% tarSeed3d=[tarSeed;zeros(1,size(tarSeed,2))];
 [srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors 特征值
 [dist,id]= sort(dist);
 %% aggregating each pair of correspondence for finding the best match
-M = size(srcSeed,2);
-N = size(tarSeed,2);
+M = size(srcSeed,2);    %种子点数量
+N = size(tarSeed,2);    %种子点数量
 seedIdx = srcIdx; 
 Err = inf(N,1);
 tform = cell(1,N); 
-ovNum = ceil(overlap*N); 
+ovNum = ceil(overlap*N);   %可能共有的特征点数目
 distThr = 0.2/4*length(radii); 
 thetaThr = 10; 
 threshold = gridStep*gridStep;
-  for i = 1:ceil(0.3*N)
+%对每一对匹配进行一次循环，求得一个最优变换
+for i = 1:ceil(0.2*N)
     n= id(i);
 %   for n = 1:N
     seed = srcSeed(:,seedIdx(n));
-    seedNorm = srcNorm(:,seedIdx(n));
     seedNorm = srcNorm(:,seedIdx(n));
      %%  当前点特征向量与所有其他特殊点的內积
     % source point cloud

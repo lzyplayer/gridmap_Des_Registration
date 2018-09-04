@@ -5,8 +5,6 @@ s=100;
 gridStep=0.3;
 overlap=0.2;
 icpSteps=100;
-TrMin=0.2;
-TrMax=1.0;
 %% ×ª»Ò¶È
 map1=rgb2gray(imread('Fr1_3.png','png'));
 map2=rgb2gray(imread('Fr2_3.png','png'));
@@ -53,12 +51,12 @@ Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 %% ¼ÓICP
 R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);
-[R,t]=fastTrICP2D(pointCMap2',pointCMap1',R0,t0,TrMin,TrMax,icpSteps);
-opMotion=[R,t;0 0 1];
+[R,t]=fastTrICP2D(pointCMap2',pointCMap1',R,t,TrMin,TrMax,icpSteps);
+R,t
 toc
 figure;
 obtain2d(pointCMap2,'.');hold on;
-transMap=opMotion*[pointCMap1';ones(1,length(pointCMap1))];
+transMap=Motion*[pointCMap1';ones(1,length(pointCMap1))];
 obtain2d(transMap,'.');
 % pcshow(pcMap3d2);hold on;
 % pcshow(pctransform(pcMap3d1,affine3d(Motion')));
