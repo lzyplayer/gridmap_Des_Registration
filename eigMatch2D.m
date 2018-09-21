@@ -9,8 +9,8 @@ radii = (0.5:0.5:2)*gridStep;
 [srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors 特征值
 [dist,id]= sort(dist);
 %% aggregating each pair of correspondence for finding the best match
-M = size(srcSeed,2);    %种子点数量
-N = size(tarSeed,2);    %种子点数量
+M = size(srcSeed,2);    %source种子点数量
+N = size(tarSeed,2);    %target种子点数量
 seedIdx = srcIdx; 
 Err = inf(N,1);
 tform = cell(1,N); 
@@ -19,7 +19,7 @@ distThr = 0.2/4*length(radii);
 thetaThr = 10; 
 threshold = gridStep*gridStep;
 %对每一对匹配进行一次循环，求得一个最优变换
-for i = 1:ceil(0.2*N)
+for i = 1:ceil(0.2*N) %对每一对儿
     n= id(i);
 %   for n = 1:N
     seed = srcSeed(:,seedIdx(n));
@@ -34,15 +34,16 @@ for i = 1:ceil(0.2*N)
 
     % target point cloud
     r = bsxfun(@minus,tarSeed,tarSeed(:,n));
-    r = sqrt(sum(r.^2,1)); % distance
+    r = sqrt(sum(r.^2,1)); % distance of 其他特殊点距离当前特殊点距离
     inProd = bsxfun(@times,tarNorm,tarNorm(:,n));
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:);
     alpha = real(acosd(inProd));  % inner product   
-
-    IDX = rangesearch(r',d',gridStep/2,'distance','cityblock');
+    
+%% r,d 分别是当前特殊点与其他各个特殊点欧氏距离，IDX求距离接近的可能的拓展点对儿
+    IDX = rangesearch(r',d',gridStep/2,'distance','cityblock');    %cityblock曼哈顿距离，这里是一维数据可能只是为了加快速度
     
     matches = [seedIdx(n) n];
-    for m = [1:seedIdx(n)-1 seedIdx(n)+1:M]        
+    for m = [1:seedIdx(n)-1 seedIdx(n)+1:M]     %除了当前点外所有     M为顺序排列的点云
         idx = IDX{m};%find(abs(r-d(m))<gridStep/2);%
         if(isempty(idx))
             continue;
@@ -51,14 +52,14 @@ for i = 1:ceil(0.2*N)
         dTheta = abs(dTheta);
         Tab = dTheta<thetaThr;
         Tab = sum(Tab,1);
-        if(all(Tab<size(theta,1)))
+        if(all(Tab<size(theta,1)))%只有在每个维度特征向量上都接近的才算扩展点对，但有一个接近点对就继续执行
             continue;
         end
         sim = mean(dTheta,1);
-        sim(Tab<size(theta,1)) = inf;
-        [minSim,ol] = min(sim);
-        R = norm(srcDesp(:,m)-tarDesp(:,idx(ol)));
-        if(minSim<thetaThr && R<distThr)
+        sim(Tab<size(theta,1)) = inf; %不全接近的都置为无穷
+        [minSim,ol] = min(sim);       %每个潜在对应点都有差值
+        R = norm(srcDesp(:,m)-tarDesp(:,idx(ol)));%描述子差距大小限制
+        if (minSim<thetaThr && R<distThr)
             matches = [matches; m idx(ol)];
         end
     end
