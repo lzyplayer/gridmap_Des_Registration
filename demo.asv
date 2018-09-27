@@ -52,10 +52,9 @@ Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 
 
 %% testcode
-close all;
-plot(s*pointCMap1(:,1),s*pointCMap1(:,2),'.');
+plot(pointCMap1(:,1),pointCMap1(:,2));
 hold on 
-plot(s*M1Seed(1,:)',s*M1Seed(2,:)','.','MarkerSize',10 ,'color','red');
+plot(M1Seed(1,:)',M1Seed(2,:)','.');
 %% ¼ÓICP
 R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);

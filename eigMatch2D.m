@@ -70,7 +70,7 @@ for i = 1:ceil(0.2*N) %对每一对儿
         match_tarSeed3d=[match_tarSeed;zeros(1,size(match_tarSeed,2))];
         CS = ransac(double(match_srcSeed3d),double(match_tarSeed3d),threshold);   
         %淘汰不可靠的对儿，然后用可靠对儿去估计运动
-        if(sum(CS)<3)
+        if(sum(CS)<3)%可靠对儿少于3时不再计算
             continue;
         end
         
@@ -85,6 +85,11 @@ for i = 1:ceil(0.2*N) %对每一对儿
         [index,dist] = flann_search(tarEst,tarSeed,1,params);
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
+        
+        if(n==197)
+            1==1;
+        end
+        
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
         break;
