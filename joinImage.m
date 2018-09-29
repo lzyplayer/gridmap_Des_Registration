@@ -10,7 +10,7 @@ if (rows1 < rows2)
 %      image1(rows2,1) = 255;
      image1(rows1+1:rows2,1:width1) = 255*ones(rows2-rows1,width1);
 else
-     image2(rows2+1:rows1,width1+1:width2) = 255*ones(rows1-rows2,width1+1:width2);
+     image2(rows2+1:rows1,1:width2) = 255*ones(rows1-rows2,width2);
 %      image2(rows1,1) = 255;
 end
 

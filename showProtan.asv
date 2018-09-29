@@ -1,6 +1,0 @@
-load dataBestMatch2d.mat
-map1=rgb2gray(imread('Fr1_3.png','png'));
-map2=rgb2gray(imread('Fr2_3.png','png'));
-match_srcSeed3d
-match_tarSeed3d
-apend

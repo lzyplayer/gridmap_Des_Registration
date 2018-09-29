@@ -2,14 +2,14 @@ clc;clear;close all;
 addpath('./flann/');
 addpath('./estimateRigidTransform');
 s=100;
-gridStep=0.3;
+gridStep=0.35;
 overlap=0.2;
 icpSteps=100;
 TrMin=0.2;
 TrMax=1.0;
 %% 转灰度
-map1=rgb2gray(imread('Fr1_3.png','png'));
-map2=rgb2gray(imread('Fr2_3.png','png'));
+map1=rgb2gray(imread('Fr1_5.png','png'));
+map2=rgb2gray(imread('Fr2_5.png','png'));
 % imshowpair(map1,map2);
 tic;
 %% 选取特殊点   
@@ -52,10 +52,10 @@ Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 
 
 %% testcode
-close all;
-plot(s*pointCMap1(:,1),s*pointCMap1(:,2),'.');
-hold on 
-plot(s*M1Seed(1,:)',s*M1Seed(2,:)','.','MarkerSize',10 ,'color','red');
+% close all;
+% plot(s*pointCMap1(:,1),s*pointCMap1(:,2),'.');
+% hold on 
+% plot(s*M1Seed(1,:)',s*M1Seed(2,:)','.','MarkerSize',10 ,'color','red');
 %% 加ICP
 R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);

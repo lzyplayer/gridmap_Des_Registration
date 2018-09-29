@@ -6,7 +6,7 @@ params.checks = 64;
 radii = (0.5:0.5:2)*gridStep;
 % srcSeed3d=[srcSeed;zeros(1,size(srcSeed,2))];
 % tarSeed3d=[tarSeed;zeros(1,size(tarSeed,2))];
-[srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors 特征值
+[srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors 特征值,找src中tar最近的点
 [dist,id]= sort(dist);
 %% aggregating each pair of correspondence for finding the best match
 M = size(srcSeed,2);    %source种子点数量
@@ -86,8 +86,8 @@ for i = 1:ceil(0.2*N) %对每一对儿
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
         
-        if(n==197)
-            1==1;
+        if(n==102)
+            save('dataBestMatch2d.mat');
         end
         
     end
