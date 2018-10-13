@@ -37,9 +37,11 @@ for i=2:shownum
     line([x1(1),x1(i)],[y1(1),y1(i)],'Color','m','LineStyle','--');
 end
 
+%% cross line
+line([x1(1),x2(1)],[y1(1),y2(1)],'Color','b','LineStyle',':','LineWidth',1.5);
+
 %% show all selected point
 showPoint(s*tarSeed)
 spointMap2 = s*srcSeed;
 spointMap2(1,:) = spointMap2(1,:)+xdistance;
 showPoint(spointMap2);
-
