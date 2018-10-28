@@ -65,7 +65,11 @@ toc
 figure;
 obtain2d(pointCMap2,'.');hold on;
 transMap=opMotion*[pointCMap1';ones(1,length(pointCMap1))];
-obtain2d(transMap,'.');
+obtain2d(transMap,'.k');
+
+obtain2d(zSeleCorM2.Location,'+r');
+transFeaPoint=opMotion*[zSeleCorM1.Location';ones(1,length(zSeleCorM1.Location))];
+obtain2d(transFeaPoint,'xm');
 % pcshow(pcMap3d2);hold on;
 % pcshow(pctransform(pcMap3d1,affine3d(Motion')));
 % imshow(imrotate(map1,74.0));

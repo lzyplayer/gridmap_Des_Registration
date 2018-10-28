@@ -1,9 +1,9 @@
 function [srcDesp,srcSeed,srcNorm] = exarctEIG2d(srcData,gridStep,specPoint)
-%This code is the Matlab implimentation of the paper, 
-%"Fast Descriptors and Correspondence Propagation for Robust Global Point Cloud Registration,"
-%IEEE transactions on Image Processing, 2017.
-%This code should be used only for academic research.
-%any other useage of this code should not be allowed without Author agreement.
+% This code is the Matlab implimentation of the paper, 
+% "Fast Descriptors and Correspondence Propagation for Robust Global Point Cloud Registration,"
+% IEEE transactions on Image Processing, 2017.
+% This code should be used only for academic research.
+% any other useage of this code should not be allowed without Author agreement.
 % If you have any problem or improvement idea about this code, please
 % contact with Guang JIANG, Xidian University. gjiang@mail.xidian.edu.cn.
 
