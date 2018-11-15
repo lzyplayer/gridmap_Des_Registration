@@ -7,6 +7,9 @@ end
 
 % construct the convariance matrix
 K = size(A,2);
-B = bsxfun(@minus, A, xc(:));
+B = bsxfun(@minus, A, xc(:));  % B为所有A指向兴趣点xc的向量
 M = 1/K*(B*B');
 
+% B : 2 * n
+% M = [ mean(x*x) mean(x*y)
+%        mean(x*y) mean(y*y) ]
