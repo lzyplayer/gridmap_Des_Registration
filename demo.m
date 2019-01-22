@@ -2,13 +2,13 @@ clc;clear;close all;
 addpath('./flann/');
 addpath('./estimateRigidTransform');
 s=100;
-gridStep=0.4;
+gridStep=0.1;
 overlap=0.2;
 icpSteps=100;
 TrMin=0.2;
 TrMax=0.8;
 desNum=400;
-%% ×ª»Ò¶È
+%% ×ªï¿½Ò¶ï¿½
 map1 = imread('D:\workspaceMatlab\grid_map_regis_project\result_pic\tell_pic.bmp');
 map2 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a2_5.png');
 % map1  = imread('../map_data/fr/Fr1_5.png');
@@ -24,23 +24,23 @@ end
 % map2=imrotate(map2,5);
 % imshowpair(map1,map2);
 tic;
-%% Ñ¡È¡ÌØÊâµã   
-% 1.Ñ¡È¡harris½Çµã×îÇ¿µã200¸ö 
-% 2.¾ùÔÈ·Ö²¼Ñ¡È¡harris½Çµã×îÇ¿µã200¸ö    (current) 
+%% Ñ¡È¡ï¿½ï¿½ï¿½ï¿½ï¿½   
+% 1.Ñ¡È¡harrisï¿½Çµï¿½ï¿½ï¿½Ç¿ï¿½ï¿½200ï¿½ï¿½ 
+% 2.ï¿½ï¿½ï¿½È·Ö²ï¿½Ñ¡È¡harrisï¿½Çµï¿½ï¿½ï¿½Ç¿ï¿½ï¿½200ï¿½ï¿½    (current) 
 % imshow(map1);hold on;
-cornersM1=detectHarrisFeatures(map1);%plot(selectUniform(cornersM1,200,size(map1)));%cornersM1.selectStrongest(200)
-seleCorM1=selectUniform(cornersM1,desNum,size(map1));
+cornersM1=detectHarrisFeatures(map1);%plot(selectUniform(cornersM1,200,size(map1)));%selectUniform(cornersM1,300,size(map1));
+seleCorM1=cornersM1.selectStrongest(300);
 % plot(seleCorM1);
 
 % figure;
 % imshow(map2);hold on;
 cornersM2=detectHarrisFeatures(map2);
-seleCorM2=selectUniform(cornersM2,desNum,size(map2));
+seleCorM2=cornersM2.selectStrongest(300);
 % plot(seleCorM2);
 
 zSeleCorM1=cornerPoints(seleCorM1.Location/s,'Metric',seleCorM1.Metric);
 zSeleCorM2=cornerPoints(seleCorM2.Location/s,'Metric',seleCorM2.Metric);
-%%  ÌáÈ¡¶þÎ¬µãÔÆ
+%%  ï¿½ï¿½È¡ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½
 [pcMap3d1,pointCMap1]=exarctPCfroImg(map1);
 [pcMap3d2,pointCMap2]=exarctPCfroImg(map2);
 %% temp change downsample
@@ -61,11 +61,11 @@ figure;
 plot(pointCMap2(:,1),pointCMap2(:,2),'.');hold on;
 plot(zSeleCorM2);
 axis equal
-%%  »ñÈ¡ÃèÊö×Ó
+%%  ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 [M1Desp,M1Seed,M1Norm]=exarctEIG2d(pointCMap1,gridStep,zSeleCorM1);
 [M2Desp,M2Seed,M2Norm]=exarctEIG2d(pointCMap2,gridStep,zSeleCorM2);
-%%  Æ¥Åä
+%%  Æ¥ï¿½ï¿½
 [Motion,match_pair]=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 
 
@@ -74,7 +74,7 @@ axis equal
 % plot(s*pointCMap1(:,1),s*pointCMap1(:,2),'.');
 % hold on 
 % plot(s*M1Seed(1,:)',s*M1Seed(2,:)','.','MarkerSize',10 ,'color','red');
-%% ¼ÓICP
+%% ï¿½ï¿½ICP
 R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);
 %% originalsize

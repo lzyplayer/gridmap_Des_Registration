@@ -1,4 +1,4 @@
-function [T,final_select_match] = eigMatch2D(srcDesp,tarDesp,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep)
+function T = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep)
 %% parameter configuration for flann search
 params.algorithm = 'kdtree';
 params.trees = 8;
@@ -6,46 +6,46 @@ params.checks = 64;
 radii = (0.5:0.5:3)*gridStep;
 % srcSeed3d=[srcSeed;zeros(1,size(srcSeed,2))];
 % tarSeed3d=[tarSeed;zeros(1,size(tarSeed,2))];
-[srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors ÌØÕ÷Öµ,ÕÒsrcÖĞtar×î½üµÄµã
+[srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors ï¿½ï¿½ï¿½ï¿½Öµ,ï¿½ï¿½srcï¿½ï¿½tarï¿½ï¿½ï¿½ï¿½Äµï¿½
 [dist,id]= sort(dist);
 %% aggregating each pair of correspondence for finding the best match
-M = size(srcSeed,2);    %sourceÖÖ×ÓµãÊıÁ¿
-N = size(tarSeed,2);    %targetÖÖ×ÓµãÊıÁ¿
+M = size(srcSeed,2);    %sourceï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½
+N = size(tarSeed,2);    %targetï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½
 seedIdx = srcIdx; 
 Err = inf(N,1);
 tform = cell(1,N); 
-ovNum = ceil(overlap*N);   %¿ÉÄÜ¹²ÓĞµÄÌØÕ÷µãÊıÄ¿
+ovNum = ceil(overlap*N);   %ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½Ğµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿
 distThr = 0.2/4*length(radii); 
 thetaThr = 10; 
 threshold = gridStep*gridStep;
 
 matchpairs={};
-%¶ÔÃ¿Ò»¶ÔÆ¥Åä½øĞĞÒ»´ÎÑ­»·£¬ÇóµÃÒ»¸ö×îÓÅ±ä»»
-for i = 1:ceil(0.2*N) %¶ÔÃ¿Ò»¶Ô¶ù
+%ï¿½ï¿½Ã¿Ò»ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Å±ä»»
+for i = 1:ceil(0.2*N) %ï¿½ï¿½Ã¿Ò»ï¿½Ô¶ï¿½
     n= id(i);
 %   for n = 1:N
     seed = srcSeed(:,seedIdx(n));
     seedNorm = srcNorm(:,seedIdx(n));
-     %%  µ±Ç°µãÌØÕ÷ÏòÁ¿ÓëËùÓĞÆäËûÌØÊâµãµÄƒÈ»ı
+     %%  ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÄƒÈ»ï¿½
     % source point cloud
     d = bsxfun(@minus,srcSeed,seed);
-    d = sqrt(sum(d.^2,1)); % distance of ÆäËûÌØÊâµã¾àÀëµ±Ç°ÌØÊâµã¾àÀë
-    inProd = bsxfun(@times,srcNorm,seedNorm);    %µ±Ç°ÌØÊâµãËÄ¸öÌØÕ÷ÏòÁ¿ÓëÆäËûÌØÕ÷µãËÄ¸öÌØÕ÷ÏòÁ¿ÄÚ»ı
+    d = sqrt(sum(d.^2,1)); % distance of ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ëµ±Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    inProd = bsxfun(@times,srcNorm,seedNorm);    %ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:) ;
     theta = real(acosd(inProd));  % inner product
 
     % target point cloud
     r = bsxfun(@minus,tarSeed,tarSeed(:,n));
-    r = sqrt(sum(r.^2,1)); % distance of ÆäËûÌØÊâµã¾àÀëµ±Ç°ÌØÊâµã¾àÀë
+    r = sqrt(sum(r.^2,1)); % distance of ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ëµ±Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     inProd = bsxfun(@times,tarNorm,tarNorm(:,n));
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:);
     alpha = real(acosd(inProd));  % inner product   
     
-%% r,d ·Ö±ğÊÇµ±Ç°ÌØÊâµãÓëÆäËû¸÷¸öÌØÊâµãÅ·ÊÏ¾àÀë£¬IDXÇó¾àÀë½Ó½üµÄ¿ÉÄÜµÄÍØÕ¹µã¶Ô¶ù
-    IDX = rangesearch(r',d',gridStep/2,'distance','cityblock');    %cityblockÂü¹ş¶Ù¾àÀë£¬ÕâÀïÊÇÒ»Î¬Êı¾İ¿ÉÄÜÖ»ÊÇÎªÁË¼Ó¿ìËÙ¶È
+%% r,d ï¿½Ö±ï¿½ï¿½Çµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å·ï¿½Ï¾ï¿½ï¿½ë£¬IDXï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½Ä¿ï¿½ï¿½Üµï¿½ï¿½ï¿½Õ¹ï¿½ï¿½Ô¶ï¿½
+    IDX = rangesearch(r',d',gridStep/2,'distance','cityblock');    %cityblockï¿½ï¿½ï¿½ï¿½ï¿½Ù¾ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Î¬ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Îªï¿½Ë¼Ó¿ï¿½ï¿½Ù¶ï¿½
     
     matches = [seedIdx(n) n];
-    for m = [1:seedIdx(n)-1 seedIdx(n)+1:M]     %³ıÁËµ±Ç°µãÍâËùÓĞ     MÎªË³ĞòÅÅÁĞµÄµãÔÆ
+    for m = [1:seedIdx(n)-1 seedIdx(n)+1:M]     %ï¿½ï¿½ï¿½Ëµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½     MÎªË³ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄµï¿½ï¿½ï¿½
         idx = IDX{m};%find(abs(r-d(m))<gridStep/2);%
         if(isempty(idx))
             continue;
@@ -54,13 +54,13 @@ for i = 1:ceil(0.2*N) %¶ÔÃ¿Ò»¶Ô¶ù
         dTheta = abs(dTheta);
         Tab = dTheta<thetaThr;
         Tab = sum(Tab,1);
-        if(all(Tab<size(theta,1)))%Ö»ÓĞÔÚÃ¿¸öÎ¬¶ÈÌØÕ÷ÏòÁ¿ÉÏ¶¼½Ó½üµÄ²ÅËãÀ©Õ¹µã¶Ô£¬µ«ÓĞÒ»¸ö½Ó½üµã¶Ô¾Í¼ÌĞøÖ´ĞĞ
+        if(all(Tab<size(theta,1)))%Ö»ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½Ó½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Ô¾Í¼ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
             continue;
         end
         sim = mean(dTheta,1);
-        sim(Tab<size(theta,1)) = inf; %²»È«½Ó½üµÄ¶¼ÖÃÎªÎŞÇî
-        [minSim,ol] = min(sim);       %Ã¿¸öÇ±ÔÚ¶ÔÓ¦µã¶¼ÓĞ²îÖµ
-        R = norm(srcDesp(:,m)-tarDesp(:,idx(ol)));%ÃèÊö×Ó²î¾à´óĞ¡ÏŞÖÆ
+        sim(Tab<size(theta,1)) = inf; %ï¿½ï¿½È«ï¿½Ó½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
+        [minSim,ol] = min(sim);       %Ã¿ï¿½ï¿½Ç±ï¿½Ú¶ï¿½Ó¦ï¿½ã¶¼ï¿½Ğ²ï¿½Öµ
+        R = norm(srcDesp(:,m)-tarDesp(:,idx(ol)));%ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½
         if (minSim<thetaThr && R<distThr)
             matches = [matches; m idx(ol)];
         end
@@ -71,8 +71,8 @@ for i = 1:ceil(0.2*N) %¶ÔÃ¿Ò»¶Ô¶ù
         match_srcSeed3d=[match_srcSeed;zeros(1,size(match_srcSeed,2))];
         match_tarSeed3d=[match_tarSeed;zeros(1,size(match_tarSeed,2))];
         CS = ransac(double(match_srcSeed3d),double(match_tarSeed3d),threshold);   
-        %ÌÔÌ­²»¿É¿¿µÄ¶Ô¶ù£¬È»ºóÓÃ¿É¿¿¶Ô¶ùÈ¥¹À¼ÆÔË¶¯
-        if(sum(CS)<3)%¿É¿¿¶Ô¶ùÉÙÓÚ3Ê±²»ÔÙ¼ÆËã
+        %ï¿½ï¿½Ì­ï¿½ï¿½ï¿½É¿ï¿½ï¿½Ä¶Ô¶ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½Ã¿É¿ï¿½ï¿½Ô¶ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½
+        if(sum(CS)<3)%ï¿½É¿ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½3Ê±ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½
             continue;
         end
         
