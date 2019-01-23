@@ -1,4 +1,4 @@
-function T = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep)
+function T = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep,srcMap,tarMap,s)
 %% parameter configuration for flann search
 params.algorithm = 'kdtree';
 params.trees = 8;
@@ -26,10 +26,12 @@ for i = 1:ceil(0.2*N) %��ÿһ�Զ�
 %   for n = 1:N
     seed = srcSeed(:,seedIdx(n));
     seedNorm = srcNorm(:,seedIdx(n));
+    seedScale = srcScale(seedIdx(n));
      %%  ��ǰ�������������������������ăȻ�
     % source point cloud
     d = bsxfun(@minus,srcSeed,seed);
     d = sqrt(sum(d.^2,1)); % distance of �����������뵱ǰ��������
+    d = d./(seedScale);%�߶Ȼ�ԭ
     inProd = bsxfun(@times,srcNorm,seedNorm);    %��ǰ������ĸ����������������������ĸ����������ڻ�
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:) ;
     theta = real(acosd(inProd));  % inner product
@@ -37,11 +39,13 @@ for i = 1:ceil(0.2*N) %��ÿһ�Զ�
     % target point cloud
     r = bsxfun(@minus,tarSeed,tarSeed(:,n));
     r = sqrt(sum(r.^2,1)); % distance of �����������뵱ǰ��������
+    r = r./(tarScale(n));
     inProd = bsxfun(@times,tarNorm,tarNorm(:,n));
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:);
     alpha = real(acosd(inProd));  % inner product   
     
 %% r,d �ֱ��ǵ�ǰ��������������������ŷ�Ͼ��룬IDX�����ӽ��Ŀ��ܵ���չ��Զ�
+    %�������� rdΪ�Ѿ�ƽ����߶ȵľ�������
     IDX = rangesearch(r',d',gridStep/2,'distance','cityblock');    %cityblock�����پ��룬������һά���ݿ���ֻ��Ϊ�˼ӿ��ٶ�
     
     matches = [seedIdx(n) n];
@@ -65,6 +69,19 @@ for i = 1:ceil(0.2*N) %��ÿһ�Զ�
             matches = [matches; m idx(ol)];
         end
     end
+    %% ����
+    figure;
+    mapPair = joinImage(srcMap,tarMap);
+    imshow(mapPair);
+    xdistance = size(srcMap,2);
+    match_srcSeed = srcSeed(:,matches(:,1));
+    match_tarSeed = tarSeed(:,matches(:,2));
+    showPoint(match_srcSeed*s);
+    showTarSeed = match_tarSeed*s;
+    showTarSeed(1,:)=showTarSeed(1,:)+xdistance;
+    showPoint(showTarSeed)
+    close all
+    %%
     if(size(matches,1)>10)
         match_srcSeed = srcSeed(:,matches(:,1));
         match_tarSeed = tarSeed(:,matches(:,2));
@@ -87,9 +104,11 @@ for i = 1:ceil(0.2*N) %��ÿһ�Զ�
         [index,dist] = flann_search(tarEst,tarSeed,1,params);
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
-        matchpairs{n}=sum(CS);
-        matchpairs_pointset{n}={match_srcSeed3d ,match_tarSeed3d};
-%         matchpairs{n}=CS;
+        
+%         if(n==102)
+%             save('dataBestMatch2d.mat');
+%         end
+        
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
         break;
