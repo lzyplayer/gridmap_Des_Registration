@@ -95,7 +95,7 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
 %         close 
         %%
         try
-            [T2d,inliners,outliners] = estimateGeometricTransform(match_srcSeed',match_tarSeed','similarity');
+            [T2d,inliners,inliners2] = estimateGeometricTransform(match_srcSeed',match_tarSeed','similarity');
         catch
             continue
         end
@@ -120,9 +120,9 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
         
-%         if(n==102)
-%             save('dataBestMatch2d.mat');
-%         end
+        if(n==120)
+            1==1;
+        end
         
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
