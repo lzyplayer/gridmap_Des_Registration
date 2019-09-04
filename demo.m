@@ -2,14 +2,16 @@ clc;clear;close all;
 addpath('./flann/');
 addpath('./estimateRigidTransform');
 s=100;
-gridStep=0.35;
-overlap=0.2;
-icpSteps=100;
+gridStep=0.2;
+overlap=0.1;
+icpSteps=300;
 TrMin=0.2;
 TrMax=1.0;
+desNum=400;
 %% 转灰度
-map1=rgb2gray(imread('../map_data/pair3/1.jpg'));
-map2=rgb2gray(imread('../map_data/pair3/2.jpg'));
+map1=rgb2gray(imread('../map_data/pair2/1.png'));
+map2=rgb2gray(imread('../map_data/pair2/3.png'));
+% map2=imrotate(map2,5);
 % imshowpair(map1,map2);
 tic;
 %% 选取特殊点   
@@ -17,13 +19,13 @@ tic;
 % 2.均匀分布选取harris角点最强点200个    (current) 
 % imshow(map1);hold on;
 cornersM1=detectHarrisFeatures(map1);%plot(selectUniform(cornersM1,200,size(map1)));%cornersM1.selectStrongest(200)
-seleCorM1=selectUniform(cornersM1,300,size(map1));
+seleCorM1=selectUniform(cornersM1,desNum,size(map1));
 % plot(seleCorM1);
 
 % figure;
 % imshow(map2);hold on;
 cornersM2=detectHarrisFeatures(map2);
-seleCorM2=selectUniform(cornersM2,300,size(map2));
+seleCorM2=selectUniform(cornersM2,desNum,size(map2));
 % plot(seleCorM2);
 
 zSeleCorM1=cornerPoints(seleCorM1.Location/s,'Metric',seleCorM1.Metric);
@@ -70,9 +72,17 @@ obtain2d(transMap,'.k');
 obtain2d(zSeleCorM2.Location,'+r');
 transFeaPoint=opMotion*[zSeleCorM1.Location';ones(1,length(zSeleCorM1.Location))];
 obtain2d(transFeaPoint,'xm');
-% pcshow(pcMap3d2);hold on;
-% pcshow(pctransform(pcMap3d1,affine3d(Motion')));
-% imshow(imrotate(map1,74.0));
-% imshowpair(map1,map2);
-% imshow(imresize(map1,[200,200]));
+%%
+
+to=t*s;
+
+
+% reset to original scale
+
+% merging_fixed(map2,map1,pointCMap1,R,to);
+%% inverse show merge
+motion_inv = inv([[R,to];[0,0,1]]);
+R1 = motion_inv(1:2,1:2);
+t1 = motion_inv(1:2,3);
+merging_fixed(map1,map2,pointCMap2,R1,t1);
 
