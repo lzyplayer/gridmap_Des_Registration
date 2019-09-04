@@ -2,12 +2,12 @@ clc;clear;close all;
 addpath('./flann/');
 addpath('./estimateRigidTransform');
 s=100;
-gridStep=0.2;
-overlap=0.1;
+gridStep=0.1;
+overlap=0.2;
 icpSteps=300;
 TrMin=0.2;
 TrMax=1.0;
-desNum=400;
+desNum=300;
 %% ×ª»Ò¶È
 map1=rgb2gray(imread('../map_data/pair2/1.png'));
 map2=rgb2gray(imread('../map_data/pair2/3.png'));
