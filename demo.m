@@ -2,15 +2,25 @@ clc;clear;close all;
 addpath('./flann/');
 addpath('./estimateRigidTransform');
 s=100;
-gridStep=0.1;
+gridStep=0.2;
 overlap=0.2;
-icpSteps=300;
+icpSteps=100;
 TrMin=0.2;
 TrMax=1.0;
 desNum=300;
 %% ×ª»Ò¶È
-map1=rgb2gray(imread('../map_data/pair2/1.png'));
-map2=rgb2gray(imread('../map_data/pair2/3.png'));
+% map1 = imread('../map_data/pair3/1.jpg');
+% map2 = imread('../map_data/pair3/2.jpg');
+map1  = imread('../map_data/fr/Fr1_3.png');
+map2  = imread('../map_data/fr/Fr2_3.png');
+if size(map1,3)~=1 
+    map1 = rgb2gray(map1);
+end
+if size(map2,3)~=1 
+    map2 = rgb2gray(map2);
+end
+
+% map1 = imresize(map1,1.0092);
 % map2=imrotate(map2,5);
 % imshowpair(map1,map2);
 tic;
@@ -61,8 +71,21 @@ Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 %% ¼ÓICP
 R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);
-[R,t]=fastTrICP2D(pointCMap2',pointCMap1',R0,t0,TrMin,TrMax,icpSteps);
-opMotion=[R,t;0 0 1];
+%% originalsize
+pcr2=pointCMap2*s;
+pcr1=pointCMap1*s;
+transmation_ori_in=t0*s;
+% pcr2=pointCMap2;
+% pcr1=pointCMap1;
+[Rori,tori,trko,minPhio]=fastTrICP2D(pcr2',pcr1',R0,transmation_ori_in,TrMin,TrMax,icpSteps);
+opMotion=[R0,transmation_ori_in;0 0 1];
+figure;
+obtain2d(pcr2,'.');hold on;
+transMap=opMotion*[pcr1';ones(1,length(pcr1))];
+obtain2d(transMap,'.k');
+%%
+[R,t,trk,minPhi]=fastTrICP2D(pointCMap2',pointCMap1',R0,t0,TrMin,TrMax,icpSteps);
+opMotion=[R0,t0;0 0 1];
 toc
 figure;
 obtain2d(pointCMap2,'.');hold on;

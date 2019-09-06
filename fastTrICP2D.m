@@ -29,7 +29,7 @@ while ((CurrStep < MoveStep)&&(abs(minPhi-phiPre)>10^(-7)))
     CurrStep= CurrStep+1;   
 end
 
-disp(['icp iter times: ' num2str(CurrStep)]);
+disp(['icp iter times: ' num2str(CurrStep) ' minPhi:' num2str(minPhi)]);
 
 %%%%%%%%%%%%%%%%%%%%Integrated Function%%%%%%%%%%%%%%%%%%%%
 %% Calculate R,t,Phi based on current overlap parameter
