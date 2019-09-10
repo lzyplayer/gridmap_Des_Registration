@@ -18,6 +18,8 @@ ovNum = ceil(overlap*N);   %可能共有的特征点数目
 distThr = 0.2/4*length(radii); 
 thetaThr = 10; 
 threshold = gridStep*gridStep;
+
+matchpairs={};
 %对每一对匹配进行一次循环，求得一个最优变换
 for i = 1:ceil(0.2*N) %对每一对儿
     n= id(i);
@@ -85,18 +87,19 @@ for i = 1:ceil(0.2*N) %对每一对儿
         [index,dist] = flann_search(tarEst,tarSeed,1,params);
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
-        
-        if(n==102)
-            save('dataBestMatch2d.mat');
-        end
-        
+        matchpairs{n}=sum(CS);
+%         matchpairs{n}=CS;
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
         break;
     end
  end
 [v,idx] = min(Err);
+final_select_match =   matchpairs{idx};
 T = tform{idx};
+disp('final_select_match:');
+% disp(final_select_match);
+disp(['size : ' num2str(final_select_match)]);
 if(isempty(T))
     disp(['match Failed with tarseed:' num2str(length(tarSeed)) ' srcSeed:' num2str(length(srcSeed)) ]);
 end

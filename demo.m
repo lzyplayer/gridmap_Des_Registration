@@ -6,13 +6,13 @@ gridStep=0.2;
 overlap=0.2;
 icpSteps=100;
 TrMin=0.2;
-TrMax=1.0;
+TrMax=0.8;
 desNum=300;
 %% ×ª»Ò¶È
-% map1 = imread('../map_data/pair3/1.jpg');
-% map2 = imread('../map_data/pair3/2.jpg');
-map1  = imread('../map_data/fr/Fr1_3.png');
-map2  = imread('../map_data/fr/Fr2_3.png');
+map1 = imread('../map_data/pair7/1.png');
+map2 = imread('../map_data/pair7/2.png');
+% map1  = imread('../map_data/fr/Fr1_5.png');
+% map2  = imread('../map_data/fr/Fr2_5.png');
 if size(map1,3)~=1 
     map1 = rgb2gray(map1);
 end
