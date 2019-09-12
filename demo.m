@@ -9,8 +9,8 @@ TrMin=0.2;
 TrMax=0.8;
 desNum=300;
 %% ×ª»Ò¶È
-map1 = imread('../map_data/pair7/1.png');
-map2 = imread('../map_data/pair7/2.png');
+map1 = imread('../map_data/fr/Fr0791.png');
+map2 = imread('../map_data/fr/Fr0792.png');
 % map1  = imread('../map_data/fr/Fr1_5.png');
 % map2  = imread('../map_data/fr/Fr2_5.png');
 if size(map1,3)~=1 
