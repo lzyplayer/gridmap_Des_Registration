@@ -8,7 +8,7 @@ function [srcDesp,srcSeed,srcNorm] = exarctEIG2d(srcData,gridStep,specPoint)
 % contact with Guang JIANG, Xidian University. gjiang@mail.xidian.edu.cn.
 
 
-radii = (0.5:0.5:2)*gridStep;
+radii = (0.5:0.5:3)*gridStep;
 srcSeed=specPoint.Location';
 srcData=srcData';
 %% compute descriptors for seed points in the source point cloud

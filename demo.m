@@ -2,15 +2,15 @@ clc;clear;close all;
 addpath('./flann/');
 addpath('./estimateRigidTransform');
 s=100;
-gridStep=0.2;
+gridStep=0.4;
 overlap=0.2;
 icpSteps=100;
 TrMin=0.2;
 TrMax=0.8;
-desNum=300;
+desNum=400;
 %% 转灰度
-map1 = imread('../map_data/fr/Fr0791.png');
-map2 = imread('../map_data/fr/Fr0792.png');
+map1 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a1_2.png');
+map2 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a2_5.png');
 % map1  = imread('../map_data/fr/Fr1_5.png');
 % map2  = imread('../map_data/fr/Fr2_5.png');
 if size(map1,3)~=1 
@@ -20,7 +20,7 @@ if size(map2,3)~=1
     map2 = rgb2gray(map2);
 end
 
-% map1 = imresize(map1,1.0092);
+% map1 = imresize(map1,2);
 % map2=imrotate(map2,5);
 % imshowpair(map1,map2);
 tic;
@@ -43,6 +43,12 @@ zSeleCorM2=cornerPoints(seleCorM2.Location/s,'Metric',seleCorM2.Metric);
 %%  提取二维点云
 [pcMap3d1,pointCMap1]=exarctPCfroImg(map1);
 [pcMap3d2,pointCMap2]=exarctPCfroImg(map2);
+%% temp change downsample
+%     downPC = pcdownsample(pcMap3d2,'gridAverage',4);
+%     pointCMap2 = downPC.Location(:,1:2);
+%%
+
+
 pointCMap1=pointCMap1/s;
 pointCMap2=pointCMap2/s;
 % pcMap3d1=pointCloud ( pcMap3d1.Location/s);
@@ -60,7 +66,7 @@ axis equal
 [M1Desp,M1Seed,M1Norm]=exarctEIG2d(pointCMap1,gridStep,zSeleCorM1);
 [M2Desp,M2Seed,M2Norm]=exarctEIG2d(pointCMap2,gridStep,zSeleCorM2);
 %%  匹配
-Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
+[Motion,match_pair]=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 
 
 %% testcode
@@ -72,6 +78,10 @@ Motion=eigMatch2D(M1Desp,M2Desp,M1Seed,M2Seed,M1Norm,M2Norm,overlap,gridStep);
 R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);
 %% originalsize
+match_source = match_pair{1}*s;
+match_target = match_pair{2}*s;
+match_source2d = match_source(1:2,:)';
+match_target2d = match_target(1:2,:)';
 pcr2=pointCMap2*s;
 pcr1=pointCMap1*s;
 transmation_ori_in=t0*s;
@@ -83,6 +93,7 @@ figure;
 obtain2d(pcr2,'.');hold on;
 transMap=opMotion*[pcr1';ones(1,length(pcr1))];
 obtain2d(transMap,'.k');
+obtain2d(match_target2d,'x');
 %%
 [R,t,trk,minPhi]=fastTrICP2D(pointCMap2',pointCMap1',R0,t0,TrMin,TrMax,icpSteps);
 opMotion=[R0,t0;0 0 1];

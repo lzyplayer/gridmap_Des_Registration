@@ -1,9 +1,9 @@
-function T = eigMatch2D(srcDesp,tarDesp,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep)
+function [T,final_select_match] = eigMatch2D(srcDesp,tarDesp,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep)
 %% parameter configuration for flann search
 params.algorithm = 'kdtree';
 params.trees = 8;
 params.checks = 64;
-radii = (0.5:0.5:2)*gridStep;
+radii = (0.5:0.5:3)*gridStep;
 % srcSeed3d=[srcSeed;zeros(1,size(srcSeed,2))];
 % tarSeed3d=[tarSeed;zeros(1,size(tarSeed,2))];
 [srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors 特征值,找src中tar最近的点
@@ -88,6 +88,7 @@ for i = 1:ceil(0.2*N) %对每一对儿
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
         matchpairs{n}=sum(CS);
+        matchpairs_pointset{n}={match_srcSeed3d ,match_tarSeed3d};
 %         matchpairs{n}=CS;
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
@@ -95,12 +96,13 @@ for i = 1:ceil(0.2*N) %对每一对儿
     end
  end
 [v,idx] = min(Err);
-final_select_match =   matchpairs{idx};
+
 T = tform{idx};
-disp('final_select_match:');
+% disp('final_select_match:');
 % disp(final_select_match);
-disp(['size : ' num2str(final_select_match)]);
+% disp(['size : ' num2str(final_select_match)]);
 if(isempty(T))
-    disp(['match Failed with tarseed:' num2str(length(tarSeed)) ' srcSeed:' num2str(length(srcSeed)) ]);
+    error(['match Failed with tarseed:' num2str(length(tarSeed)) ' srcSeed:' num2str(length(srcSeed)) ]);
 end
+final_select_match =   matchpairs_pointset{idx};
 end
