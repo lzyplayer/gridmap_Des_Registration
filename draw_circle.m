@@ -7,7 +7,7 @@ end
 hold on;
 for i=1:length(radius)
     pos = [center(i,:)-radius(i) 2*radius(i) 2*radius(i)];
-    rectangle(axes_curr,'Position',pos,'Curvature',[1,1],'EdgeColor','g');
+    rectangle(axes_curr,'Position',pos,'Curvature',[1,1],'EdgeColor',[0.3660 0.5740 0.1880]);
 end
 end
 
