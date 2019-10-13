@@ -9,7 +9,7 @@ TrMin=0.2;
 TrMax=0.8;
 desNum=400;
 %% ×ª»Ò¶È
-map1 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a1_2.png');
+map1 = imread('D:\workspaceMatlab\grid_map_regis_project\result_pic\tell_pic.bmp');
 map2 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a2_5.png');
 % map1  = imread('../map_data/fr/Fr1_5.png');
 % map2  = imread('../map_data/fr/Fr2_5.png');

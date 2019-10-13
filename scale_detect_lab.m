@@ -1,5 +1,5 @@
 figure;
-grid_size=0.01;
+grid_size=0.02;
 
 Mdata = pointCMap1;
 % Ddata = seleCorM2.Location/100;
@@ -9,11 +9,11 @@ ring_point_num = diff(gen_result);
 ring_area = grid_size^2+(1:length(ring_point_num))*grid_size*2;
 ring_num_noscale = ring_point_num./ring_area;%(1+0.5*(1:length(ring_point_num)));
 subplot(2,1,1);
-plot(ring_num_noscale);
+plot(ring_num_noscale,'LineWidth',2);
 axis([1 60 0 inf])
 axis auto
 
-r=grid_size*22;
+r=grid_size*56;
 Ddata = cursor_info1.Position;
 pos = [Ddata-r 2*r 2*r];
 rectangle('Position',pos,'Curvature',[1,1]);
