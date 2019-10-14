@@ -120,9 +120,7 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
         [dist,ind] = sort(dist);        
         Err(n) = sum(sum((tarEst(:,index(ind(1:ovNum)))-tarSeed(:,ind(1:ovNum))).^2));
         
-        if(n==120)
-            1==1;
-        end
+     
         
     end
     if (size(matches,1)> 0.65*size(srcDesp,2))
