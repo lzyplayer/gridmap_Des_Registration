@@ -61,6 +61,6 @@ currAxis.XTick=[1:0.5:6];
 currAxis.YTick=[-1:1:4];
 currAxis.XTickLabel
 axis([1,6,-0.5,4]);
-xlabel('{\fontsize{12}Scal{e_P} : Scal{e_Q}}')    ;
-ylabel('{\fontsize{12}\DeltaScale}')    ;
+xlabel('{\fontsize{12}{s_p} : {s_q}}')    ;
+ylabel('{\fontsize{12}\Deltas}')    ;
 legend({'Fr079','Intel/2','Loop5'},'Location','northwest')

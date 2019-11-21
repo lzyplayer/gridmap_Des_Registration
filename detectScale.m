@@ -28,7 +28,7 @@ end
 diff_scale_N = size(range_result,2)-1;
 
 ring_point_num = diff(range_result')';
-
+%%area of circle
 ring_area = repmat(grid_step^2+(1:diff_scale_N)*grid_step*2,size(ring_point_num,1),1);
 ring_num_noscale = ring_point_num./ring_area;%(1+0.5*(1:length(ring_point_num)));
 %% scale peak

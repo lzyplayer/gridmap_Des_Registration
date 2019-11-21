@@ -4,7 +4,7 @@ clc;close all;
 addpath('./flann/');
 
 s=10;
-gridStep=0.2;
+gridStep=0.3;
 scale_detect_gridstep=1;
 max_scale_detect_size=300;
 overlap=0.5;
@@ -18,11 +18,12 @@ bool_chart=zeros(10,10);
 %% 
 for k=2:10
     for l=2:10
-        k=3; 
-        l=2;
+        try
+
         path1 = ['D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a1_' num2str(k)  '.png'];
         path2 = ['D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a2_' num2str(l)  '.png'];
         % 转灰度
+        
         map1=rgb2gray(imread(path1));
         map2=rgb2gray(imread(path2));
         % im1 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a1_2.png');
@@ -40,7 +41,7 @@ for k=2:10
         corner_Point1 = detectHarrisFeatures(map1);
         sele_corner_points1 =corner_Point1.selectUniform(300,size(map1));
 %         plot(sele_corner_points1);
-        %% 灰度角点
+        % 灰度角点
         % % figure
         % % imshow(map1);hold on
         % % gray1 = edge(map1);
@@ -135,10 +136,10 @@ for k=2:10
 %         transMap=[[R0,t0];[0,0,1]]*[pointCMap1ScaledDown';ones(1,length(pointCMap1ScaledDown))];
 %         obtain2d(transMap,'.k');
 %         check_box = input('this one OK?');
-        if minPhi<5
+        if minPhi<4
             bool_chart(k,l)=1;
         end
-        close all;
+%         close all;
         % obtain2d(zSeleCorM2.Location,'+r');
         % transFeaPoint=opMotion*[zSeleCorM1.Location';ones(1,length(zSeleCorM1.Location))];
         % obtain2d(transFeaPoint,'xm');
@@ -147,6 +148,8 @@ for k=2:10
         % imshow(imrotate(map1,74.0));
         % imshowpair(map1,map2);
         % imshow(imresize(map1,[200,200]));
-        
+        catch 
+            continue;
+        end
     end
 end
