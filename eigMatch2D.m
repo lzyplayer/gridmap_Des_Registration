@@ -1,4 +1,4 @@
-function T = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep,srcMap,tarMap,s)
+function [T,match_srcSeedset,match_tarSeedset] = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep,srcMap,tarMap,s)
 %% parameter configuration for flann search
 params.algorithm = 'kdtree';
 params.trees = 8;
@@ -84,7 +84,7 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
     if(size(matches,1)>4)
         match_srcSeed = srcSeed(:,matches(:,1));
         match_tarSeed = tarSeed(:,matches(:,2));
-        %% ����
+        %% ����
 %         figure;
 %         mapPair = joinImage(srcMap,tarMap);
 %         imshow(mapPair);
@@ -95,7 +95,7 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
 %         close 
         %%
         try
-            [T2d,inliners,inliners2] = estimateGeometricTransform(match_srcSeed',match_tarSeed','similarity');
+            [T2d,inliner_src,inliner_tar] = estimateGeometricTransform(match_srcSeed',match_tarSeed','similarity');
         catch
             continue
         end
@@ -115,6 +115,8 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
         tarEst = T2d*[srcSeed;ones(1,M)];
         tarEst = tarEst(1:2,:);
         tform{n} = T2d;
+        match_srcSeedset{n} = inliner_src;
+        match_tarSeedset{n} = inliner_tar;
         
         [index,dist] = flann_search(tarEst,tarSeed,1,params);
         [dist,ind] = sort(dist);        
@@ -128,7 +130,8 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
     end
  end
 [v,idx] = min(Err);
-
+match_tarSeedset =  match_tarSeedset{idx};
+match_srcSeedset =  match_srcSeedset{idx};
 T = tform{idx};
 % disp('final_select_match:');
 % disp(final_select_match);

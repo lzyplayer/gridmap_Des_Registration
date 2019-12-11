@@ -15,30 +15,30 @@ hold on
 %²î¾àmap2
 xdistance = size(map1,2);
 % close all
-% %% show map2 feature
-% shownum=8;
-% x2=xdistance + s*match_srcSeed3d(1,1:shownum)';
-% y2=s*match_srcSeed3d(2,1:shownum)';
-% plot(x2,y2,'.','Marker','*','MarkerSize',9);
-% plot(x2(1),y2(1),'.','Marker','o','MarkerSize',6,'MarkerFaceColor','r');
-% %% map2 inner line
-% for i=2:shownum
-%     line([x2(1),x2(i)],[y2(1),y2(i)],'Color','m','LineStyle','--');
-% end
-%
-% %% show map1 feature
-% shownum=8;
-% x1=s*match_tarSeed3d(1,1:shownum)';
-% y1=s*match_tarSeed3d(2,1:shownum)';
-% plot(x1,y1,'.','Marker','*','MarkerSize',9);
-% plot(x1(1),y1(1),'.','Marker','o','MarkerSize',6,'MarkerFaceColor','r');
-% %% map1 inner line
-% for i=2:shownum
-%     line([x1(1),x1(i)],[y1(1),y1(i)],'Color','m','LineStyle','--');
-% end
-%
-% %% cross line
-% line([x1(1),x2(1)],[y1(1),y2(1)],'Color','b','LineStyle',':','LineWidth',1.5);
+%% show map2 feature
+shownum=8;
+x2=xdistance + s*match_srcSeed3d(1,1:shownum)';
+y2=s*match_srcSeed3d(2,1:shownum)';
+plot(x2,y2,'.','Marker','*','MarkerSize',9);
+plot(x2(1),y2(1),'.','Marker','o','MarkerSize',6,'MarkerFaceColor','r');
+%% map2 inner line
+for i=2:shownum
+    line([x2(1),x2(i)],[y2(1),y2(i)],'Color','m','LineStyle','--');
+end
+
+%% show map1 feature
+shownum=8;
+x1=s*match_tarSeed3d(1,1:shownum)';
+y1=s*match_tarSeed3d(2,1:shownum)';
+plot(x1,y1,'.','Marker','*','MarkerSize',9);
+plot(x1(1),y1(1),'.','Marker','o','MarkerSize',6,'MarkerFaceColor','r');
+%% map1 inner line
+for i=2:shownum
+    line([x1(1),x1(i)],[y1(1),y1(i)],'Color','m','LineStyle','--');
+end
+
+%% cross line
+line([x1(1),x2(1)],[y1(1),y2(1)],'Color','b','LineStyle',':','LineWidth',1.5);
 
 %% show all selected point
 showPoint(s*tarSeed)
