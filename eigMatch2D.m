@@ -1,4 +1,4 @@
-function [T,match_srcSeedset,match_tarSeedset] = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep,srcMap,tarMap,s)
+function [T,match_srcSeedset,match_tarSeedset,match_oriSeedNum,match_srcSeedsetori,match_tarSeedsetori] = eigMatch2D(srcDesp,tarDesp,srcScale,tarScale,srcSeed,tarSeed,srcNorm,tarNorm,overlap,gridStep,srcMap,tarMap,s)
 %% parameter configuration for flann search
 params.algorithm = 'kdtree';
 params.trees = 8;
@@ -6,7 +6,7 @@ params.checks = 64;
 radii = (0.5:0.5:3)*gridStep;
 % srcSeed3d=[srcSeed;zeros(1,size(srcSeed,2))];
 % tarSeed3d=[tarSeed;zeros(1,size(tarSeed,2))];
-[srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors ����ֵ,��src��tar����ĵ�
+[srcIdx,dist] = flann_search(srcDesp,tarDesp,1,params); % match with descriptors ����ֵ,��src��tar����ĵ�?
 [dist,id]= sort(dist);
 %% aggregating each pair of correspondence for finding the best match
 M = size(srcSeed,2);    %source���ӵ�����
@@ -32,7 +32,7 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
     d = bsxfun(@minus,srcSeed,seed);
     d = sqrt(sum(d.^2,1)); % distance of �����������뵱ǰ��������
     d = d./(seedScale);%�߶Ȼ�ԭ
-    inProd = bsxfun(@times,srcNorm,seedNorm);    %��ǰ������ĸ����������������������ĸ����������ڻ�
+    inProd = bsxfun(@times,srcNorm,seedNorm);    %��ǰ������ĸ����������������������ĸ����������ڻ�?
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:) ;
     theta = real(acosd(inProd));  % inner product
 
@@ -44,8 +44,8 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
     inProd = inProd(1:2:end,:) + inProd(2:2:end,:);
     alpha = real(acosd(inProd));  % inner product   
     
-%% r,d �ֱ��ǵ�ǰ��������������������ŷ�Ͼ��룬IDX�����ӽ��Ŀ��ܵ���չ��Զ�
-    %�������� rdΪ�Ѿ�ƽ����߶ȵľ�������
+%% r,d �ֱ��ǵ�ǰ��������������������ŷ�Ͼ��룬IDX�����ӽ��Ŀ��ܵ���չ��Զ�?
+    %�������� rdΪ�Ѿ�ƽ����߶ȵľ�������?
     IDX = rangesearch(r',d',gridStep/2,'distance','cityblock');    %cityblock�����پ��룬������һά���ݿ���ֻ��Ϊ�˼ӿ��ٶ�
     
     matches = [seedIdx(n) n];
@@ -115,6 +115,9 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
         tarEst = T2d*[srcSeed;ones(1,M)];
         tarEst = tarEst(1:2,:);
         tform{n} = T2d;
+        match_srcSeedsetori{n} = match_srcSeed';
+        match_tarSeedsetori{n} = match_tarSeed';
+        match_oriSeedNum(n) = length(match_srcSeed);
         match_srcSeedset{n} = inliner_src;
         match_tarSeedset{n} = inliner_tar;
         
@@ -130,8 +133,11 @@ for i = 1:ceil(0.5*N) %��ÿһ�Զ�  0.2
     end
  end
 [v,idx] = min(Err);
+match_oriSeedNum =  match_oriSeedNum(idx);
 match_tarSeedset =  match_tarSeedset{idx};
 match_srcSeedset =  match_srcSeedset{idx};
+match_srcSeedsetori = match_srcSeedsetori{idx} ;
+match_tarSeedsetori = match_tarSeedsetori{idx} ; 
 T = tform{idx};
 % disp('final_select_match:');
 % disp(final_select_match);
@@ -139,5 +145,4 @@ T = tform{idx};
 if(isempty(T))
     error(['match Failed with tarseed:' num2str(length(tarSeed)) ' srcSeed:' num2str(length(srcSeed)) ]);
 end
-final_select_match =   matchpairs_pointset{idx};
 end
