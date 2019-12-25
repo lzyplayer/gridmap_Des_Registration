@@ -5,7 +5,7 @@ clc;close all;
 addpath('./flann/');
 
 s=10;
-gridStep=0.3;
+gridStep=0.4;
 scale_detect_gridstep=1;
 max_scale_detect_size=150;
 overlap=0.5;
@@ -16,11 +16,13 @@ TrMax=0.9;
 zoomVar=1;
 downStep=0.03;
 
-% % 转灰度
+% % % 转灰度
 map1=rgb2gray(imread('D:\workspaceMatlab\grid_map_regis_project\map_data\pair3\1.jpg'));
 map2=rgb2gray(imread('D:\workspaceMatlab\grid_map_regis_project\map_data\pair3\2.jpg'));
-% im1 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a1_2.png');
-% im2 = imread('D:\workspaceMatlab\grid_map_regis_project\map_different_scale\Fr79a2_5.png'); 
+% map1=rgb2gray(imread('D:\workspaceMatlab\grid_map_regis_project\map_data\map_different_scale\Fr79a1_10.png'));
+% map2=rgb2gray(imread('D:\workspaceMatlab\grid_map_regis_project\map_data\map_different_scale\Fr79a1_5.png'));
+% map1=rgb2gray(imread('D:\workspaceMatlab\grid_map_regis_project\map_data\pair2\Intel1_1_1000_37.5.png'));
+% map2=rgb2gray(imread('D:\workspaceMatlab\grid_map_regis_project\map_data\pair2\4_25.png'));
 % im1 = imread('..\map_data\pair2\Intel1_1_1000_40.png');
 % im2 = imread('..\map_data\pair2\2.png'); 
 
@@ -48,8 +50,8 @@ tic;
 %% gridaverage down
 pc1 = pointCloud([pointCMap1,zeros(size(pointCMap1,1),1)]);
 pc2 = pointCloud([pointCMap2,zeros(size(pointCMap2,1),1)]);
-down_sele_p1 = pcdownsample(pc1,'gridAverage',20);
-down_sele_p2 = pcdownsample(pc2,'gridAverage',20);
+down_sele_p1 = pcdownsample(pc1,'gridAverage',18);
+down_sele_p2 = pcdownsample(pc2,'gridAverage',21);
 
 % 
 % down_sele_p1 = pcdownsample(pc1,'random',300/pc1.Count);
@@ -61,14 +63,16 @@ down_sele_p2 = pcdownsample(pc2,'gridAverage',20);
 figure;
 imshow(map1);hold on;
 points_scale1 = detectScale(pointCMap1,down_sele_p1.Location(:,1:2),scale_detect_gridstep,max_scale_detect_size);
-draw_circle(points_scale1.Location(1:300,:),points_scale1.ScaleRadius(1:300,:));
-showPoint(points_scale1.Location(1:300,:));
+% draw_circle(points_scale1.Location(1:300,:),points_scale1.ScaleRadius(1:300,:));
+% showPoint(points_scale1.Location(1:300,:));
+showPoint(down_sele_p1.Location);
 % 
 figure;
 imshow(map2);hold on;
 points_scale2 = detectScale(pointCMap2,down_sele_p2.Location(:,1:2),scale_detect_gridstep,max_scale_detect_size);
-draw_circle(points_scale2.Location(1:300,:),points_scale2.ScaleRadius(1:300,:));
-showPoint(points_scale2.Location(1:300,:));
+% draw_circle(points_scale2.Location(1:300,:),points_scale2.ScaleRadius(1:300,:));
+% showPoint(points_scale2.Location(1:300,:));
+showPoint(down_sele_p2.Location);
 % 
 
 %% 存储尺度点（加缩放）
@@ -120,11 +124,11 @@ R0=Motion(1:2,1:2);
 t0=Motion(1:2,3);
 % opMotion=Motion;
 R0=R0./scaleC;%成为刚体变换以ICP
-[s, R, t, TriKSIB, minPhi] = FastTrICP(pointCMap2ScaledDown',pointCMap1ScaledDown',1,R0,t0,icpSteps,TrMin,TrMax);
+[s_refine, R, t, TriKSIB, minPhi] = FastTrICP(pointCMap2ScaledDown',pointCMap1ScaledDown',1,R0,t0,icpSteps,TrMin,TrMax);
 % [R,t,~,minPhi]=fastTrICP2D(pointCMap2ScaledDown',pointCMap1ScaledDown',R0,t0,TrMin,TrMax,icpSteps);
-scaleC*s
+scaleC*s_refine
 minPhi
-opMotion=[R.*s,t;0 0 1];
+opMotion=[R.*s_refine,t;0 0 1];
 toc
 figure;
 obtain2d(pointCMap2ScaledDown,'.');hold on;
@@ -135,12 +139,7 @@ obtain2d(transMap,'.k');
 % transMap=opMotion*[pointCMap1ScaledDown';ones(1,length(pointCMap1ScaledDown))];
 % obtain2d(transMap,'.k');
 
-
-% obtain2d(zSeleCorM2.Location,'+r');
-% transFeaPoint=opMotion*[zSeleCorM1.Location';ones(1,length(zSeleCorM1.Location))];
-% obtain2d(transFeaPoint,'xm');
-% pcshow(pcMap3d2);hold on;
-% pcshow(pctransform(pcMap3d1,affine3d(Motion')));
-% imshow(imrotate(map1,74.0));
-% imshowpair(map1,map2);
-% imshow(imresize(map1,[200,200]));
+%% 
+im_motion=[R.*(scaleC*s_refine),t*s;0 0 1];
+figure
+scale_merge_map(map1,map2,im_motion);
