@@ -14,10 +14,18 @@ srcSeed=specPoint.Location';
 srcData=srcData';
 %% compute descriptors for seed points in the source point cloud
 K = length(radii);
+%% rangesearch_diffr
+ %% slow than diffr
+% srcDataModel = createns(srcData','NSMethod','kdtree');
+% location_x = specPoint.Location(:,1);
+% location_y = specPoint.Location(:,2);
+% scaleRadius = specPoint.ScaleRadius;
+% srcIdx = arrayfun(@(x,y,s) rangesearch(srcDataModel,[x,y],s),location_x,location_y,radii(1)*scaleRadius,'UniformOutput', true);
 
+ %% diffr fast 
 srcIdx = rangeSearchDiffR(srcData,radii(1),specPoint,zoomVar);
 %已改编写为函数rangeSearchDiffR以改进速度srcIdx2=arrayfun(@(a)rangesearch(srcData',[a.Location(1,1),a.Location(1,2)],radii(1)*a.Scale/zoomVar),specPoint,'UniformOutput', true);
-
+%%
 %srcIdx = rangesearch(srcData',srcSeed',radii(1));%等长搜查 %寻找seed周radii(1)内的所有点云点
 idxSz = cellfun(@length,srcIdx,'uni',true);
 srcIdx = srcIdx(idxSz>10);          %选取周遭点超过10个的有代表性兴趣点（好生成描述）

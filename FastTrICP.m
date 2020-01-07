@@ -5,7 +5,7 @@ CurrStep = 0;
 TData = transform_to_global(Data, R, t, s); 
 Mns= createns(Model');
 
-while ((CurrStep < MoveStep)&(abs(phi-minBPhi)>10^(-3)))
+while ((CurrStep < MoveStep)&(abs(phi-minBPhi)>10^(-7)))
     
     [corrB,TDB] = knnsearch(Mns,TData');
     
