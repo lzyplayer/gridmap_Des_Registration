@@ -1,5 +1,5 @@
-% clear;
-% clc;close all;
+clear;
+clc;close all;
 
 addpath('./flann/');
 
@@ -128,22 +128,22 @@ show_protangonation_claw_y(map1,map2,match_1Seed2d,match_2Seed2d,s);
 % pointCMap2ScaledDown = pcdownsample2d(pointCMap2,downStep);
 % % pointCMap1ScaledDown = pcdownsample2d(pointCMap1,downStep);
 % % pointCMap2ScaledDown = pcdownsample2d(pointCMap2,downStep);
-% R0=Motion(1:2,1:2);
-% t0=Motion(1:2,3);
-% % opMotion=Motion;
-% R0=R0./scaleC;%成为刚体变换以ICP
-% %sicp
-% [scale_refined, R, t, TriKSIB, minPhi] = FastTrICP(pointCMap2ScaledDown',pointCMap1Down',scaleC,R0,t0,icpSteps,TrMin,TrMax);
+R0=Motion(1:2,1:2);
+t0=Motion(1:2,3);
+% opMotion=Motion;
+R0=R0./scaleC;%成为刚体变换以ICP
+%sicp
+[scale_refined, R, t, TriKSIB, minPhi] = FastTrICP(pointCMap2',pointCMap1',scaleC,R0,t0,icpSteps,TrMin,TrMax);
 % 
 % 
-% fprintf("final scale\t : %f\n",  scale_refined)
-% fprintf("minPhi\t\t : %f\n", minPhi)
-% opMotion=[R.*scale_refined,t;0 0 1];
+fprintf("final scale\t : %f\n",  scale_refined)
+fprintf("minPhi\t\t : %f\n", minPhi)
+opMotion=[R.*scale_refined,t;0 0 1];
 % toc
-% figure;
-% obtain2d(pointCMap2ScaledDown,'.');hold on;
-% transMap=opMotion*[pointCMap1Down';ones(1,length(pointCMap1Down))];
-% obtain2d(transMap,'.k');
+figure;
+obtain2d(pointCMap2,'.');hold on;
+transMap=opMotion*[pointCMap1';ones(1,length(pointCMap1))];
+obtain2d(transMap,'.k');
 % 
 % figure;
 % obtain2d(pointCMap2ScaledDown,'.');hold on;
@@ -161,14 +161,14 @@ show_protangonation_claw_y(map1,map2,match_1Seed2d,match_2Seed2d,s);
 
 %% merge_map_image
 % get original transform_matrix
-% im_motion=[R.*(scale_refined*scaleC),t*s;0 0 1];
-% figure
-% scale_merge_map(map1,map2,im_motion);
+im_motion=[R.*scale_refined,t*s;0 0 1];
+figure
+scale_merge_map(map1,map2,im_motion);
 
 
 % R0 image
-% im_motion=[R0.*(scale_refined*scaleC),t0*s;0 0 1];
-% figure
-% scale_merge_map(map1,map2,im_motion);
+im_motion=[R0.*(scale_refined),t0*s;0 0 1];
+figure
+scale_merge_map(map1,map2,im_motion);
 
 
